@@ -83,52 +83,63 @@ def whatsapp_bot():
     remetente = request.form.get("From")
     msg = request.form.get('Body').strip().lower()
     resp = MessagingResponse()
+    response_msg = ""
 
     if remetente not in estados_do_usuario:
         estados_do_usuario[remetente] = "menu_principal"
-        return str(resp.message(menu_principal()))
-
+        response_msg = menu_principal()
+        resp.message(response_msg)
+        print(f"Usuário: {remetente}, Estado: menu_principal, Mensagem: {msg}, Resposta: {response_msg}")
+        return str(resp)
 
     estado_atual = estados_do_usuario[remetente]
-    response_msg = ""
 
-    # Comando para encerrar
-    if msg == "f" or msg == "F":
+    # Encerrar atendimento
+    if msg == "f":
         estados_do_usuario.pop(remetente, None)
-        return str(resp.message("✅ Atendimento encerrado. Digite qualquer coisa para começar novamente."))
+        response_msg = "✅ Atendimento encerrado. Digite qualquer coisa para começar novamente."
+        resp.message(response_msg)
+        print(f"Usuário: {remetente}, Estado: ENCERRADO, Mensagem: {msg}, Resposta: {response_msg}")
+        return str(resp)
 
-    # Comando para voltar ao menu principal
+    # Voltar para o menu principal
     if msg == "0":
         estados_do_usuario[remetente] = "menu_principal"
-        return str(resp.message(menu_principal()))
+        response_msg = menu_principal()
+        resp.message(response_msg)
+        print(f"Usuário: {remetente}, Estado: menu_principal, Mensagem: {msg}, Resposta: {response_msg}")
+        return str(resp)
 
-    # Comando para voltar ao menu anterior
+    # Voltar para o menu anterior
     if msg in ["v", "voltar"]:
         if estado_atual.startswith("vermelhinho_") or estado_atual == "vermelhinho_selecao":
             estados_do_usuario[remetente] = "menu_transporte"
-            return str(resp.message(menu_transporte()))
+            response_msg = menu_transporte()
         elif estado_atual == "menu_transporte":
             estados_do_usuario[remetente] = "menu_principal"
-            return str(resp.message(menu_principal()))
+            response_msg = menu_principal()
         elif estado_atual == "menu_saude":
             estados_do_usuario[remetente] = "menu_principal"
-            return str(resp.message(menu_principal()))
+            response_msg = menu_principal()
         else:
             estados_do_usuario[remetente] = "menu_principal"
-            return str(resp.message(menu_principal()))
+            response_msg = menu_principal()
+        resp.message(response_msg)
+        print(f"Usuário: {remetente}, Estado: {estado_atual}, Mensagem: {msg}, Resposta: {response_msg}")
+        return str(resp)
 
     # Lógica dos menus
     if estado_atual == "menu_principal":
         if msg == "1":
             estados_do_usuario[remetente] = "menu_saude"
-            return str(resp.message(menu_saude()))
+            response_msg = menu_saude()
         elif msg == "2":
-            return str(resp.message("🚨 Emergência:\n- SAMU: 192\n- Bombeiros: 193\n- Polícia: 190\n\nDigite [V] para voltar ou [0] para o menu principal."))
+            response_msg = "🚨 Emergência:\n- SAMU: 192\n- Bombeiros: 193\n- Polícia: 190\n\nDigite [V] para voltar ou [0] para o menu principal."
         elif msg == "3":
             estados_do_usuario[remetente] = "menu_transporte"
-            return str(resp.message(menu_transporte()))
+            response_msg = menu_transporte()
         else:
-            return str(resp.message(menu_principal()))
+            response_msg = menu_principal()
 
     elif estado_atual == "menu_saude":
         if msg == "1":
@@ -160,7 +171,6 @@ def whatsapp_bot():
     elif estado_atual.startswith("vermelhinho_"):
         codigo = msg.upper()
         if codigo in vermelhinhos:
-            estados_do_usuario[remetente] = f"vermelhinho_{codigo}"
             response_msg = horarios_vermelhinho(codigo)
         else:
             response_msg = "❌ Código inválido.\n" + menu_vermelhinhos()
@@ -169,8 +179,9 @@ def whatsapp_bot():
         response_msg = "❌ Não entendi. Digite uma opção válida, [V] para voltar ou [0] para o menu principal."
 
     resp.message(response_msg)
-    return str(resp)
 
+    print(f"Usuário: {remetente}, Estado: {estado_atual}, Mensagem: {msg}, Resposta: {response_msg}")
+    return str(resp)
 
 if __name__ == "__main__":
     app.run(debug=True)
