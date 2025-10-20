@@ -1,0 +1,11 @@
+# Created by venv; see https://docs.python.org/3/library/venv.html
+# Ficheiro de segredos - NUNCA ENVIAR PARA O GITHUB!
+.env
+
+# Pasta do ambiente virtual do Python
+venv/
+
+# Pastas de cache do Python
+__pycache__/
+*.pyc
+
