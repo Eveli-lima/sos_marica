@@ -34,7 +34,7 @@ def _configure_gemini():
     )
     
     model = genai.GenerativeModel(
-        model_name='gemini-1.5-pro-latest',
+        model_name='gemini-1.0-pro',
         system_instruction=system_prompt,
         tools=[get_horarios_onibus]
     )
