@@ -4,7 +4,7 @@ import pathlib # Módulo para lidar com caminhos de arquivos
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 from dotenv import load_dotenv, find_dotenv # Adicionamos find_dotenv
-import google.generativeai as genai
+
 
 
 
